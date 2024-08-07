@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/Logo.png";
 import { Container } from "../../Components/Container";
 import { Input } from "../../Components/Input";
@@ -6,6 +7,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "flowbite-react";
+
+import { auth } from "../../services/fbConect";
+import { createUserWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 
 const schema = z.object({
   email: z
@@ -19,6 +23,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export function Register() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,

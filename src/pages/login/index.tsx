@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/Logo.png";
 import { Container } from "../../Components/Container";
 import { Input } from "../../Components/Input";
@@ -6,6 +7,9 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "flowbite-react";
+
+import { signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { auth } from "../../services/fbConect";
 
 const schema = z.object({
   email: z
@@ -18,6 +22,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>;
 
 export function Login() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -27,8 +32,25 @@ export function Login() {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    const handleLogout = async () => {
+      await signOut(auth);
+    };
+
+    handleLogout();
+  }, []);
+
   const onSubmit = (data: FormData) => {
-    console.log(data);
+    signInWithEmailAndPassword(auth, data.email, data.password)
+      .then((user) => {
+        console.log("Logado com sucesso");
+        navigate("/dashboard");
+        console.log(user);
+      })
+      .catch((err: any) => {
+        console.log("Usuário não encontrado!");
+        console.log(err.message);
+      });
   };
 
   return (
@@ -61,7 +83,9 @@ export function Login() {
             />
           </div>
 
-          <Button type="submit" className="bg-verdeMedio hover:verde">Acessar</Button>
+          <Button type="submit" className="bg-verdeMedio hover:verde">
+            Acessar
+          </Button>
         </form>
 
         <Link to={"/register"} className="text-white">
