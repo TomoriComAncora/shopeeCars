@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Logo from "../../assets/Logo.jpeg";
+import Logo from "../../assets/Logo.png";
 import { Container } from "../../Components/Container";
 import { Input } from "../../Components/Input";
 import { useForm } from "react-hook-form";
@@ -61,10 +61,12 @@ export function Login() {
             />
           </div>
 
-          <Button className="bg-verdeMedio hover:verde">Acessar</Button>
+          <Button type="submit" className="bg-verdeMedio hover:verde">Acessar</Button>
         </form>
 
-        <Link to={"/register"} className="text-white">Não possui conta? Cadastre-se</Link>
+        <Link to={"/register"} className="text-white">
+          Não possui conta? Cadastre-se
+        </Link>
       </div>
     </Container>
   );

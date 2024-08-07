@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Logo from "../../assets/Logo.jpeg";
+import Logo from "../../assets/Logo.png";
 import { FiUser, FiLogIn } from "react-icons/fi";
 
 export function Header() {
