@@ -1,11 +1,12 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Layout } from "./Components/Layout";
+import { Home } from "./pages/home";
 import { Cars } from "./pages/cars";
 import { Dashboard } from "./pages/dashboard";
 import { New } from "./pages/dashboard/new";
-import { Home } from "./pages/home";
 import { Login } from "./pages/login";
 import { Register } from "./pages/register";
+import { Private } from "./routes/Private";
 
 const router = createBrowserRouter([
   {
@@ -17,15 +18,27 @@ const router = createBrowserRouter([
       },
       {
         path: "/cars/:id",
-        element: <Cars />,
+        element: (
+          <Private>
+            <Cars />
+          </Private>
+        ),
       },
       {
         path: "/dashboard",
-        element: <Dashboard />,
+        element: (
+          <Private>
+            <Dashboard />
+          </Private>
+        ),
       },
       {
         path: "/dashboard/new",
-        element: <New />,
+        element: (
+          <Private>
+            <New />
+          </Private>
+        ),
       },
     ],
   },
