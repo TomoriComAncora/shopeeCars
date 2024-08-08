@@ -1,6 +1,5 @@
 import { useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../../assets/Logo.png";
 import { Container } from "../../Components/Container";
 import { Input } from "../../Components/Input";
 import { useForm } from "react-hook-form";
@@ -9,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "flowbite-react";
 import { AuthContext } from "../../contexts/AuthContexts";
 import { auth } from "../../services/fbConect";
+import Logo from "../../assets/Logo.png";
 import {createUserWithEmailAndPassword, signOut, updateProfile} from "firebase/auth";
 
 const schema = z.object({
