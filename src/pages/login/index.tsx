@@ -83,7 +83,7 @@ export function Login() {
             />
           </div>
 
-          <Button type="submit" className="bg-verdeMedio hover:verde">
+          <Button type="submit" color="failure">
             Acessar
           </Button>
         </form>
