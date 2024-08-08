@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FileInput, Label, Textarea } from "flowbite-react";
 import { ChangeEvent } from "react";
 
-
 const schema = z.object({
   name: z.string().min(1, "O campo nome é obrigatório"),
   model: z.string().min(1, "O modelo é obrigatótio"),
@@ -24,48 +23,43 @@ const schema = z.object({
   describe: z.string().min(1, "A descrição é obrigatória"),
 });
 
-
 type formData = z.infer<typeof schema>;
 
-
 export function New() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<formData>({
+    resolver: zodResolver(schema),
+    mode: "onChange",
+  });
 
-
- const {
-   register,
-   handleSubmit,
-   formState: { errors },
-   reset,
- } = useForm<formData>({
-   resolver: zodResolver(schema),
-   mode: "onChange",
- });
-
-
- const onSubmit = (data: formData) => {
-   console.log(data);
- };
+  const onSubmit = (data: formData) => {
+    console.log(data);
+  };
 
   function handleFile(event: ChangeEvent<HTMLInputElement>): void {
     throw new Error("Function not implemented.");
   }
 
-return (
-  <Container>
-    <DashboardHeader />
-    <div className="w-full bg-white p-3 rounded-lg flex flex-col sm:flex-row items-center gap-2">
-      <div>
-        <div className="mb-2 block">
-          <Label htmlFor="file-upload" value="Carregar Arquivos" />
+  return (
+    <Container>
+      <DashboardHeader />
+      <div className="w-full bg-white p-3 rounded-lg flex flex-col sm:flex-row items-center gap-2">
+        <div>
+          <div className="mb-2 block">
+            <Label htmlFor="file-upload" value="Carregar Arquivos" />
+          </div>
+          <FileInput
+            id="file-upload"
+            accept="image/*"
+            onChange={handleFile}
+            helperText="PNG, JPG."
+          />
         </div>
-        <FileInput
-          id="file-upload"
-          accept="image/*"
-          onChange={handleFile}
-          helperText="PNG, JPG."
-        />
-      </div>
-      {/* {imagemCarro.map((item) => (
+        {/* {imagemCarro.map((item) => (
         <div
           key={item.nome}
           className="w-full h-32 flex items-center justify-center relative"
@@ -97,153 +91,153 @@ return (
           />
         </div>
       ))} */}
-    </div>
+      </div>
 
-    <div className="w-full bg-white p-10 rounded-lg flex flex-col sm:flex-row items-center gap-2 mt-2">
-      <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-        <div className="relative z-0 w-full mb-5 group">
-          <Input
-            type="text"
-            name="name"
-            register={register}
-            error={errors.name?.message}
-            placeholder="EX: Onix 1.0"
-          />
-          <label
-            htmlFor="name"
-            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
-          >
-            Nome do carro
-          </label>
-        </div>
-
-        <div className="relative z-0 w-full mb-5 group">
-          <Input
-            type="text"
-            name="model"
-            register={register}
-            error={errors.model?.message}
-            placeholder="EX: 1.0 manual"
-          />
-          <label
-            htmlFor="model"
-            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
-          >
-            Modelo
-          </label>
-        </div>
-
-        <div className="flex flex-row w-full mb-3 gap-3">
+      <div className="w-full bg-white p-10 rounded-lg flex flex-col sm:flex-row items-center gap-2 mt-2">
+        <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
           <div className="relative z-0 w-full mb-5 group">
             <Input
               type="text"
-              name="year"
+              name="name"
               register={register}
-              error={errors.year?.message}
-              placeholder="EX: 2019"
+              error={errors.name?.message}
+              placeholder="EX: Onix 1.0"
             />
             <label
-              htmlFor="year"
+              htmlFor="name"
               className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
             >
-              Ano
+              Nome do carro
             </label>
           </div>
+
           <div className="relative z-0 w-full mb-5 group">
             <Input
               type="text"
-              name="km"
+              name="model"
               register={register}
-              error={errors.km?.message}
-              placeholder="EX: 290.000"
+              error={errors.model?.message}
+              placeholder="EX: 1.0 manual"
             />
             <label
-              htmlFor="km"
+              htmlFor="model"
               className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
             >
-              km rodados
+              Modelo
             </label>
           </div>
-        </div>
 
-        <div className="flex flex-row w-full mb-3 gap-3">
+          <div className="flex flex-row w-full mb-3 gap-3">
+            <div className="relative z-0 w-full mb-5 group">
+              <Input
+                type="text"
+                name="year"
+                register={register}
+                error={errors.year?.message}
+                placeholder="EX: 2019"
+              />
+              <label
+                htmlFor="year"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
+              >
+                Ano
+              </label>
+            </div>
+            <div className="relative z-0 w-full mb-5 group">
+              <Input
+                type="text"
+                name="km"
+                register={register}
+                error={errors.km?.message}
+                placeholder="EX: 290.000"
+              />
+              <label
+                htmlFor="km"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
+              >
+                km rodados
+              </label>
+            </div>
+          </div>
+
+          <div className="flex flex-row w-full mb-3 gap-3">
+            <div className="relative z-0 w-full mb-5 group">
+              <Input
+                type="text"
+                name="whatsapp"
+                register={register}
+                error={errors.whatsapp?.message}
+                placeholder="EX: 6712345678"
+              />
+              <label
+                htmlFor="whatsapp"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
+              >
+                Contato / whatsapp
+              </label>
+            </div>
+            <div className="relative z-0 w-full mb-5 group">
+              <Input
+                type="text"
+                name="city"
+                register={register}
+                error={errors.city?.message}
+                placeholder="EX: Corumbá"
+              />
+              <label
+                htmlFor="city"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
+              >
+                Cidade
+              </label>
+            </div>
+          </div>
+
           <div className="relative z-0 w-full mb-5 group">
             <Input
               type="text"
-              name="whatsapp"
+              name="price"
               register={register}
-              error={errors.whatsapp?.message}
-              placeholder="EX: 6712345678"
+              error={errors.price?.message}
+              placeholder="EX: R$300.000"
             />
             <label
-              htmlFor="whatsapp"
+              htmlFor="price"
               className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
             >
-              Contato / whatsapp
+              Preço
             </label>
           </div>
+
           <div className="relative z-0 w-full mb-5 group">
-            <Input
-              type="text"
-              name="city"
-              register={register}
-              error={errors.city?.message}
-              placeholder="EX: Corumbá"
+            <div className="mb-2 block ">
+              <Label
+                htmlFor="comment"
+                value="Descrição"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
+              />
+            </div>
+            <Textarea
+              className="block py-2.3 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              id="comment"
+              placeholder="Digite a descrição completa do carro"
+              required
+              rows={4}
+              {...register("describe")}
             />
-            <label
-              htmlFor="city"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
-            >
-              Cidade
-            </label>
+            {errors.describe && (
+              <p className="mb-1 text-red-500">{errors.describe.message}</p>
+            )}
           </div>
-        </div>
 
-        <div className="relative z-0 w-full mb-5 group">
-          <Input
-            type="text"
-            name="price"
-            register={register}
-            error={errors.price?.message}
-            placeholder="EX: R$300.000"
-          />
-          <label
-            htmlFor="price"
-            className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
-          >
-            Preço
-          </label>
-        </div>
-
-        <div className="relative z-0 w-full mb-5 group">
-          <div className="mb-2 block ">
-            <Label
-              htmlFor="comment"
-              value="Descrição"
-              className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-7 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500"
-            />
-          </div>
-          <Textarea
-            className="block py-2.3 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
-            id="comment"
-            placeholder="Digite a descrição completa do carro"
-            required
-            rows={4}
-            {...register("describe")}
-          />
-          {errors.describe && (
-            <p className="mb-1 text-red-500">{errors.describe.message}</p>
-          )}
-        </div>
-
-        <button
+          <button
             type="submit"
             className="text-white bg-zinc-700 hover:bg-zinc-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all"
           >
             Cadastrar
           </button>
-          
-        {/* {editar ? (
+
+          {/* {editar ? (
           <button
             type="submit"
             className="text-white bg-zinc-700 hover:bg-zinc-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all"
@@ -258,8 +252,8 @@ return (
             Cadastrar
           </button>
         )} */}
-      </form>
-    </div>
-  </Container>
-); 
+        </form>
+      </div>
+    </Container>
+  );
 }
