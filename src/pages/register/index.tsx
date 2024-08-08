@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/Logo.png";
 import { Container } from "../../Components/Container";
@@ -7,21 +7,17 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "flowbite-react";
-
+import { AuthContext } from "../../contexts/AuthContexts";
 import { auth } from "../../services/fbConect";
-import {
-  createUserWithEmailAndPassword,
-  signOut,
-  updateProfile,
-} from "firebase/auth";
+import {createUserWithEmailAndPassword, signOut, updateProfile} from "firebase/auth";
 
 const schema = z.object({
   email: z
     .string()
     .email("Insira um email válido")
-    .min(1, "Campo email é obrigatório"),
-  password: z.string().min(5, "O campo senha deve ter no mínimo 5 carácteres"),
-  name: z.string().min(1, "O campo nome é obrigatório"),
+    .min(1, "Email é obrigatório"),
+  password: z.string().min(6, "A senha deve ter no mínimo 4 carácteres"),
+  nome: z.string().min(1, "O campo nome é obrigatório"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -45,18 +41,23 @@ export function Register() {
     handleLogout();
   }, []);
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     createUserWithEmailAndPassword(auth, data.email, data.password)
       .then(async (user) => {
         await updateProfile(user.user, {
-          displayName: data.name,
+          displayName: data.nome,
         });
-        console.log("Usuário cadastrado com sucesso!");
-        navigate("/dashboard", {replace:true});
+        handleInfoUser({
+          name: data.nome,
+          email: data.email,
+          uid: user.user.uid,
+        });
+        console.log("Usuario cadastrado com sucesso");
+        navigate("/dashboard", { replace: true });
       })
       .catch((err) => {
-        console.log("Erro ao cadastrar usuário!");
-        console.log(err.message);
+        console.log("Erro ao cadastra esse usuário");
+        console.log(err);
       });
   };
 
@@ -64,7 +65,7 @@ export function Register() {
     <Container>
       <div className="w-full min-h-screen flex justify-center items-center flex-col gap-4">
         <Link to={"/"} className="mb-6 max-w-sm w-full">
-          <img src={Logo} alt="logo do site" />
+          <img src={Logo} alt="logo do site" className="w-full" />
         </Link>
 
         <form
@@ -75,8 +76,8 @@ export function Register() {
             <Input
               type="text"
               placeholder="Digite seu nome"
-              name="name"
-              error={errors.name?.message}
+              name="nome"
+              error={errors.nome?.message}
               register={register}
             />
           </div>
@@ -98,16 +99,20 @@ export function Register() {
               register={register}
             />
           </div>
-
-          <Button type="submit" color="failure">
+          <button
+            type="submit"
+            className="bg-zinc-900 w-full rounded-md text-white h-10 font-medium"
+          >
             Cadastrar
-          </Button>
+          </button>
         </form>
 
-        <Link to={"/login"} className="text-white">
-          Já possui conta? Faça o login!
-        </Link>
+        <Link to={"/login"}>Já possui conta? Faça o login!</Link>
       </div>
     </Container>
   );
+};
+
+function handleInfoUser(arg0: { name: string; email: string; uid: string; }) {
+  throw new Error("Function not implemented.");
 }
