@@ -1,6 +1,11 @@
+import { Container } from "../../../Components/Container";
+import { DashboardHeader } from "../../../Components/PanelHeader";
 
 export function New() {
   return (
-    <div>New</div>
-  )
+    <Container>
+      <DashboardHeader />
+      <h1>Página de Dashboard</h1>
+    </Container>
+  );
 }
