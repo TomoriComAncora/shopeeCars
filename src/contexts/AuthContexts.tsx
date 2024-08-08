@@ -14,9 +14,9 @@ type AuthContextData = {
 };
 
 interface UserProps {
-  uid: String;
-  name: String | null;
-  email: String | null;
+  uid: string;
+  name: string | null;
+  email: string | null;
 }
 
 export const AuthContext = createContext({} as AuthContextData);
