@@ -9,7 +9,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "flowbite-react";
 
 import { auth } from "../../services/fbConect";
-import { createUserWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 
 const schema = z.object({
   email: z
@@ -33,8 +37,27 @@ export function Register() {
     mode: "onChange",
   });
 
+  useEffect(() => {
+    const handleLogout = async () => {
+      await signOut(auth);
+    };
+
+    handleLogout();
+  }, []);
+
   const onSubmit = (data: FormData) => {
-    console.log(data);
+    createUserWithEmailAndPassword(auth, data.email, data.password)
+      .then(async (user) => {
+        await updateProfile(user.user, {
+          displayName: data.name,
+        });
+        console.log("Usuário cadastrado com sucesso!");
+        navigate("/dashboard", {replace:true});
+      })
+      .catch((err) => {
+        console.log("Erro ao cadastrar usuário!");
+        console.log(err.message);
+      });
   };
 
   return (
@@ -76,8 +99,8 @@ export function Register() {
             />
           </div>
 
-          <Button type="submit" className="bg-verdeMedio hover:verde">
-            Acessar
+          <Button type="submit" color="failure">
+            Cadastrar
           </Button>
         </form>
 
