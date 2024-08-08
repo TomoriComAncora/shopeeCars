@@ -1,28 +1,29 @@
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContexts";
 import { Link } from "react-router-dom";
-import Logo from "../../assets/Logo.png";
+import logoImg from "../../assets/logo.svg";
 import { FiUser, FiLogIn } from "react-icons/fi";
 
 export function Header() {
-  const login = false;
-  const loadAuth = false;
+  const { signed, loadingAuth } = useContext(AuthContext);
 
   return (
-    <div className="w-full flex items-center justify-center h-16 bg-azulFraco drop-shadow mb-4">
+    <div className="w-full flex items-center justify-center h-16 bg-white drop-shadow mb-4">
       <header className="flex w-full max-w-7xl items-center justify-between px-4 mx-auto">
         <Link to={"/"}>
-          <img src={Logo} alt="Logo do Site" className="h-16"/>
+          <img src={logoImg} alt="Logo do site" />
         </Link>
-        {!loadAuth && login && (
+        {!loadingAuth && signed && (
           <Link to={"/dashboard"}>
-            <div className="border-2 rounded-full p-1 border-gray-400">
-              <FiUser size={24} color="#fff" />
+            <div className="border-2 rounded-full p-1 border-gray-900">
+              <FiUser size={24} color="#000" />
             </div>
           </Link>
         )}
-        {!loadAuth && !login && (
+        {!loadingAuth && !signed && (
           <Link to={"/login"}>
-            <div className="border-2 rounded-full p-1 border-gray-400">
-              <FiLogIn size={24} color="#fff" />
+            <div className="border-2 rounded-full p-1 border-gray-900">
+              <FiLogIn size={24} color="#000" />
             </div>
           </Link>
         )}

@@ -9,12 +9,14 @@ interface AuthProviderProps {
 type AuthContextData = {
   signed: boolean;
   loadingAuth: boolean;
+  handleInfoUser: ({ name, email, uid }: UserProps) => void;
+  user: UserProps | null;
 };
 
 interface UserProps {
-  uid: string;
-  name: string | null;
-  email: string | null;
+  uid: String;
+  name: String | null;
+  email: String | null;
 }
 
 export const AuthContext = createContext({} as AuthContextData);
@@ -28,8 +30,8 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
       if (user) {
         setUser({
           uid: user.uid,
-          email: user?.email,
           name: user?.displayName,
+          email: user?.email,
         });
 
         setLoadingAuth(false);
@@ -44,11 +46,21 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     };
   }, []);
 
+  const handleInfoUser = ({ name, email, uid }: UserProps) => {
+    setUser({
+      name,
+      email,
+      uid,
+    });
+  };
+
   return (
     <AuthContext.Provider
       value={{
         signed: !!user,
         loadingAuth,
+        handleInfoUser,
+        user,
       }}
     >
       {children}
