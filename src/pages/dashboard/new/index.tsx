@@ -8,13 +8,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FileInput, Label, Textarea } from "flowbite-react";
 import { AuthContext } from "../../../contexts/AuthContexts";
 import { v4 as uuidV4 } from "uuid";
-import { storage } from "../../../services/fbConect";
+import { storage, db } from "../../../services/fbConect";
 import {
   ref,
   uploadBytes,
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import { addDoc, collection } from "firebase/firestore";
 import Logo from "../../../assets/Logo.png";
 
 const schema = z.object({
@@ -94,6 +95,42 @@ export function New() {
 
   const onSubmit = (data: formData) => {
     console.log(data);
+    if (imagesCar.length <= 2) {
+      alert("Adicione no mínimo 3 imagens do carro");
+      return;
+    }
+
+    const listImagesCars = imagesCar.map((car) => {
+      return {
+        uid: car.uid,
+        name: car.name,
+        url: car.url,
+      };
+    });
+
+    addDoc(collection(db, "cars"), {
+      name: data.name,
+      model: data.model,
+      year: data.year,
+      km: data.km,
+      city: data.city,
+      whatsapp: data.whatsapp,
+      price: data.price,
+      describe: data.describe,
+      createIn: new Date(),
+      user: user?.name,
+      uid: user?.uid,
+      images: listImagesCars,
+    })
+      .then(() => {
+        reset();
+        setImagesCar([]);
+        console.log("Cadastrado com sucesso!");
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log("Erro ao cadastrar carro!");
+      });
   };
   return (
     <Container>
