@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { collection, query, getDocs, orderBy } from "firebase/firestore";
 import { db } from "../../services/fbConect";
 import { Container } from "../../Components/Container";
+import { Link } from "react-router-dom";
 
 interface CarsProps {
   id: string;
@@ -23,6 +24,7 @@ interface CarsImagesProps {
 
 export function Home() {
   const [cars, setCars] = useState<CarsProps[]>([]);
+  const [loadingImages, setLoadingImages] = useState<string[]>([]);
 
   useEffect(() => {
     const loadingCars = () => {
@@ -51,6 +53,10 @@ export function Home() {
 
     loadingCars();
   }, []);
+
+  const handleLoadingImage = (id: string) => {
+    setLoadingImages((prevImages) => [...prevImages, id]);
+  };
 
   return (
     <div>
@@ -99,30 +105,111 @@ export function Home() {
         </h1>
 
         <main className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {cars.map((itens)=>(
-            <section className="w-full bg-white rounded-lg" key={itens.id}>
-            <img
-              src={itens.images[0].url}
-              alt="foto do carro"
-              className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
-            />
-            <p className="font-bold mt-1 mb-2 px-2">{itens.name}</p>
+          {cars.map((itens) => (
+            <Link to={`/cars/${itens.id}`} key={itens.id}>
+              <section className="w-full bg-white rounded-lg" key={itens.id}>
+                <div
+                  role="status"
+                  className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                  style={{
+                    display: loadingImages.includes(itens.id)
+                      ? "none"
+                      : "block",
+                  }}
+                ></div>
+                <img
+                  src={itens.images[0].url}
+                  alt="foto do carro"
+                  className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
+                  onLoad={() => handleLoadingImage(itens.id)}
+                  style={{
+                    display: loadingImages.includes(itens.id)
+                      ? "block"
+                      : "none",
+                  }}
+                />
+                <div
+                  className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                  style={{
+                    display: loadingImages.includes(itens.id)
+                      ? "none"
+                      : "block",
+                  }}
+                ></div>
+                <p
+                  className="font-bold mt-1 mb-2 px-2"
+                  style={{
+                    display: loadingImages.includes(itens.id)
+                      ? "block"
+                      : "none",
+                  }}
+                >
+                  {itens.name}
+                </p>
 
-            <div className="flex flex-col px-2">
-              <span className="text-zinc-700 mb-6 font-medium">
-                Ano {itens.year} | {itens.km} KM
-              </span>
-              <strong className="text-black font-medium text-xl">
-                R$ {itens.price}
-              </strong>
-            </div>
+                <div className="flex flex-col px-2">
+                  <div
+                    className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                    style={{
+                      display: loadingImages.includes(itens.id)
+                        ? "none"
+                        : "block",
+                    }}
+                  ></div>
+                  <span
+                    className="text-zinc-700 mb-6 font-medium"
+                    style={{
+                      display: loadingImages.includes(itens.id)
+                        ? "block"
+                        : "none",
+                    }}
+                  >
+                    Ano {itens.year} | {itens.km} KM
+                  </span>
+                  <div
+                    className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                    style={{
+                      display: loadingImages.includes(itens.id)
+                        ? "none"
+                        : "block",
+                    }}
+                  ></div>
+                  <strong
+                    className="text-black font-medium text-xl"
+                    style={{
+                      display: loadingImages.includes(itens.id)
+                        ? "block"
+                        : "none",
+                    }}
+                  >
+                    R$ {itens.price}
+                  </strong>
+                </div>
 
-            <div className="w-full h-px bg-slate-300 my-2"></div>
+                <div className="w-full h-px bg-slate-300 my-2"></div>
 
-            <div className="px-2 pb-2">
-              <span className="text-zinc-700 font-medium">{itens.city}</span>
-            </div>
-          </section>
+                <div className="px-2 pb-2">
+                  <div
+                    className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                    style={{
+                      display: loadingImages.includes(itens.id)
+                        ? "none"
+                        : "block",
+                    }}
+                  ></div>
+                  <span
+                    className="text-zinc-700 font-medium"
+                    style={{
+                      display: loadingImages.includes(itens.id)
+                        ? "block"
+                        : "none",
+                    }}
+                  >
+                    {itens.city}
+                  </span>
+                </div>
+              </section>
+            </Link>
           ))}
         </main>
       </Container>
