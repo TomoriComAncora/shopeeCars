@@ -1,6 +1,57 @@
+import { useState, useEffect } from "react";
+import { collection, query, getDocs, orderBy } from "firebase/firestore";
+import { db } from "../../services/fbConect";
 import { Container } from "../../Components/Container";
 
+interface CarsProps {
+  id: string;
+  name: string;
+  model: string;
+  price: string | number;
+  year: string;
+  city: string;
+  uid: string;
+  km: string;
+  images: CarsImagesProps[];
+}
+
+interface CarsImagesProps {
+  uid: string;
+  name: string;
+  url: string;
+}
+
 export function Home() {
+  const [cars, setCars] = useState<CarsProps[]>([]);
+
+  useEffect(() => {
+    const loadingCars = () => {
+      const carsRef = collection(db, "cars");
+      const querryRef = query(carsRef, orderBy("createIn", "desc"));
+
+      getDocs(querryRef).then((snapshot) => {
+        let listCars = [] as CarsProps[];
+        snapshot.forEach((doc) => {
+          listCars.push({
+            id: doc.id,
+            name: doc.data().name,
+            model: doc.data().model,
+            price: doc.data().price,
+            year: doc.data().year,
+            city: doc.data().city,
+            uid: doc.data().uid,
+            km: doc.data().km,
+            images: doc.data().images,
+          });
+        });
+
+        setCars(listCars);
+      });
+    };
+
+    loadingCars();
+  }, []);
+
   return (
     <div>
       <Container>
@@ -48,31 +99,31 @@ export function Home() {
         </h1>
 
         <main className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
-          <section className="w-full bg-white rounded-lg">
+          {cars.map((itens)=>(
+            <section className="w-full bg-white rounded-lg" key={itens.id}>
             <img
-              src={
-                "https://image.webmotors.com.br/_fotos/anunciousados/gigante/2024/202406/20240612/maserati-mc20-3.0-v6-biturbo-gasolina-dct-wmimagem13230179961.jpg?s=fill&w=552&h=414&q=60"
-              }
+              src={itens.images[0].url}
               alt="foto do carro"
               className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
             />
-            <p className="font-bold mt-1 mb-2 px-2">Maserati MC20</p>
+            <p className="font-bold mt-1 mb-2 px-2">{itens.name}</p>
 
             <div className="flex flex-col px-2">
               <span className="text-zinc-700 mb-6 font-medium">
-                Ano 2021/2022 | 1600 KM
+                Ano {itens.year} | {itens.km} KM
               </span>
               <strong className="text-black font-medium text-xl">
-                R$ 3.299.999
+                R$ {itens.price}
               </strong>
             </div>
 
             <div className="w-full h-px bg-slate-300 my-2"></div>
 
             <div className="px-2 pb-2">
-              <span className="text-zinc-700 font-medium">Brusque - SC</span>
+              <span className="text-zinc-700 font-medium">{itens.city}</span>
             </div>
           </section>
+          ))}
         </main>
       </Container>
     </div>
