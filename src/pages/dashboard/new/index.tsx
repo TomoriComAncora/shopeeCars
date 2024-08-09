@@ -132,6 +132,21 @@ export function New() {
         console.log("Erro ao cadastrar carro!");
       });
   };
+
+  const handleDeleteImage = async (item: ImageItensProps) => {
+    const image = `images/${item.uid}/${item.name}`;
+    const delRef = ref(storage, image);
+    await deleteObject(delRef)
+      .then(() => {
+        console.log("Imagem deletada com sucesso!");
+        setImagesCar(imagesCar.filter((car) => car.url !== item.url));
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log("Erro ao deletar imagem!");
+      });
+  };
+
   return (
     <Container>
       <DashboardHeader />
@@ -147,39 +162,14 @@ export function New() {
             helperText="PNG, JPG."
           />
         </div>
-
-        <div className="w-full h-32 flex items-center justify-center relative">
-          <button className="absolute">
-            <svg
-              className="w-6 h-6 text-white dark:text-gray-800"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fillRule="evenodd"
-                d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-          <img
-            src={Logo}
-            className="rounded-lg w-full h-32 object-cover"
-            alt="Foto do carro"
-          />
-        </div>
-        {/* {imagemCarro.map((item) => (
+        {imagesCar.map((item) => (
         <div
-          key={item.nome}
+          key={item.name}
           className="w-full h-32 flex items-center justify-center relative"
         >
           <button
             className="absolute"
-            onClick={() => handleDeletarImagem(item)}
+            onClick={() => handleDeleteImage(item)}
           >
             <svg
               className="w-6 h-6 text-white dark:text-gray-800"
@@ -203,7 +193,7 @@ export function New() {
             alt="Foto do carro"
           />
         </div>
-      ))} */}
+      ))}
       </div>
 
       <div className="w-full bg-white p-10 rounded-lg flex flex-col sm:flex-row items-center gap-2 mt-2">
