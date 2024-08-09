@@ -1,3 +1,4 @@
+import { ChangeEvent, useState, useContext } from "react";
 import { Container } from "../../../Components/Container";
 import { DashboardHeader } from "../../../Components/PanelHeader";
 import { useForm } from "react-hook-form";
@@ -5,7 +6,16 @@ import { z } from "zod";
 import { Input } from "../../../Components/Input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FileInput, Label, Textarea } from "flowbite-react";
-import { ChangeEvent } from "react";
+import { AuthContext } from "../../../contexts/AuthContexts";
+import { v4 as uuidV4 } from "uuid";
+import { storage } from "../../../services/fbConect";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+import Logo from "../../../assets/Logo.png";
 
 const schema = z.object({
   name: z.string().min(1, "O campo nome é obrigatório"),
@@ -25,7 +35,15 @@ const schema = z.object({
 
 type formData = z.infer<typeof schema>;
 
+interface ImageItensProps {
+  uid: string;
+  name: string;
+  prevUrl: string;
+  url: string;
+}
+
 export function New() {
+  const { user } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
@@ -36,14 +54,47 @@ export function New() {
     mode: "onChange",
   });
 
+  const [imagesCar, setImagesCar] = useState<ImageItensProps[]>([]);
+
+  const handlefile = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const image = e.target.files[0];
+
+      if (image.type === "image/jpeg" || image.type === "image/png") {
+        await handleUpload(image);
+      } else {
+        alert("Envie uma imagem jpeg ou png");
+        return;
+      }
+    }
+  };
+
+  const handleUpload = async (image: File) => {
+    if (!user?.uid) {
+      return;
+    }
+
+    const uidCurrent = user?.uid;
+    const uidImage = uuidV4();
+
+    const uploadRef = ref(storage, `images/${uidCurrent}/${uidImage}`);
+
+    uploadBytes(uploadRef, image).then((snapshot) => {
+      getDownloadURL(snapshot.ref).then((downloadUrl) => {
+        const imageItens = {
+          name: uidImage,
+          uid: uidCurrent,
+          prevUrl: URL.createObjectURL(image),
+          url: downloadUrl,
+        };
+        setImagesCar((prev) => [...prev, imageItens]);
+      });
+    });
+  };
+
   const onSubmit = (data: formData) => {
     console.log(data);
   };
-
-  function handleFile(event: ChangeEvent<HTMLInputElement>): void {
-    throw new Error("Function not implemented.");
-  }
-
   return (
     <Container>
       <DashboardHeader />
@@ -55,8 +106,33 @@ export function New() {
           <FileInput
             id="file-upload"
             accept="image/*"
-            onChange={handleFile}
+            onChange={handlefile}
             helperText="PNG, JPG."
+          />
+        </div>
+
+        <div className="w-full h-32 flex items-center justify-center relative">
+          <button className="absolute">
+            <svg
+              className="w-6 h-6 text-white dark:text-gray-800"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fillRule="evenodd"
+                d="M8.586 2.586A2 2 0 0 1 10 2h4a2 2 0 0 1 2 2v2h3a1 1 0 1 1 0 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a1 1 0 0 1 0-2h3V4a2 2 0 0 1 .586-1.414ZM10 6h4V4h-4v2Zm1 4a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Zm4 0a1 1 0 1 0-2 0v8a1 1 0 1 0 2 0v-8Z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </button>
+          <img
+            src={Logo}
+            className="rounded-lg w-full h-32 object-cover"
+            alt="Foto do carro"
           />
         </div>
         {/* {imagemCarro.map((item) => (
