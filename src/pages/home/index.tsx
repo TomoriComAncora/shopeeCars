@@ -129,7 +129,7 @@ export function Home() {
                   }}
                 />
                 <div
-                  className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                  className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mt-1 mb-2 ml-2 px-2"
                   style={{
                     display: loadingImages.includes(itens.id)
                       ? "none"
@@ -149,7 +149,7 @@ export function Home() {
 
                 <div className="flex flex-col px-2">
                   <div
-                    className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                    className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"
                     style={{
                       display: loadingImages.includes(itens.id)
                         ? "none"
@@ -167,7 +167,7 @@ export function Home() {
                     Ano {itens.year} | {itens.km} KM
                   </span>
                   <div
-                    className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                    className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"
                     style={{
                       display: loadingImages.includes(itens.id)
                         ? "none"
@@ -190,7 +190,7 @@ export function Home() {
 
                 <div className="px-2 pb-2">
                   <div
-                    className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
+                    className="h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"
                     style={{
                       display: loadingImages.includes(itens.id)
                         ? "none"
