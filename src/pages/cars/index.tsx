@@ -3,6 +3,7 @@ import { Container } from "../../Components/Container";
 import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../services/fbConect";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 interface CarsProps {
   id: string;
@@ -22,13 +23,14 @@ interface CarsProps {
 
 interface CarsImagesProps {
   uid: string;
-  nome: string;
+  name: string;
   url: string;
 }
 
 export function Cars() {
   const { id } = useParams();
   const [cars, setCars] = useState<CarsProps>();
+  const [slider, setSlider] = useState<number>(2);
 
   useEffect(() => {
     const loadingCar = async () => {
@@ -59,9 +61,35 @@ export function Cars() {
     loadingCar();
   }, [id]);
 
+  useEffect(() => {
+    const handleScreenSize = () => {
+      if (window.innerWidth < 720) {
+        setSlider(1);
+      }
+    };
+
+    handleScreenSize();
+
+    window.addEventListener("resize", handleScreenSize);
+
+    return () => {
+      window.removeEventListener("resize", handleScreenSize);
+    };
+  }, []);
+
   return (
     <Container>
-      <h1>SLIDER</h1>
+      <Swiper
+        slidesPerView={slider}
+        pagination={{ clickable: true }}
+        navigation
+      >
+        {cars?.images.map((image) => (
+          <SwiperSlide key={image.name}>
+            <img src={image.url} className="w-full h-96" />
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
       {cars && (
         <main className="w-full bg-white rounded-lg p-5 my-4">
