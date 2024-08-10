@@ -5,7 +5,6 @@ import { Input } from "../../Components/Input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "flowbite-react";
 import { AuthContext } from "../../contexts/AuthContexts";
 import { auth } from "../../services/fbConect";
 import Logo from "../../assets/Logo.png";
@@ -17,12 +16,13 @@ const schema = z.object({
     .email("Insira um email válido")
     .min(1, "Email é obrigatório"),
   password: z.string().min(6, "A senha deve ter no mínimo 4 carácteres"),
-  nome: z.string().min(1, "O campo nome é obrigatório"),
+  name: z.string().min(1, "O campo nome é obrigatório"),
 });
 
 type FormData = z.infer<typeof schema>;
 
 export function Register() {
+  const {handleInfoUser} = useContext(AuthContext)
   const navigate = useNavigate();
   const {
     register,
@@ -45,10 +45,10 @@ export function Register() {
     createUserWithEmailAndPassword(auth, data.email, data.password)
       .then(async (user) => {
         await updateProfile(user.user, {
-          displayName: data.nome,
+          displayName: data.name,
         });
         handleInfoUser({
-          name: data.nome,
+          name: data.name,
           email: data.email,
           uid: user.user.uid,
         });
@@ -76,8 +76,8 @@ export function Register() {
             <Input
               type="text"
               placeholder="Digite seu nome"
-              name="nome"
-              error={errors.nome?.message}
+              name="name"
+              error={errors.name?.message}
               register={register}
             />
           </div>
@@ -114,7 +114,3 @@ export function Register() {
     </Container>
   );
 };
-
-function handleInfoUser(arg0: { name: string; email: string; uid: string; }) {
-  throw new Error("Function not implemented.");
-}
