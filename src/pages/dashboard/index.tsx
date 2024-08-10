@@ -9,7 +9,8 @@ import {
   deleteDoc,
   query,
 } from "firebase/firestore";
-import { db } from "../../services/fbConect";
+import { db, storage } from "../../services/fbConect";
+import { ref, deleteObject } from "firebase/storage";
 import { AuthContext } from "../../contexts/AuthContexts";
 
 interface CarsProps {
@@ -68,10 +69,20 @@ export function Dashboard() {
     loadingCars();
   }, [user]);
 
-  const handleDeleteCars = async (id: string) => {
-    const delRef = doc(db, "cars", id);
+  const handleDeleteCars = async (item: CarsProps) => {
+    const delRef = doc(db, "cars", item.id);
     await deleteDoc(delRef);
-    setCars(cars.filter((car) => car.id !== id));
+     item.images.map(async (image) => {
+       const roadImage = `images/${image.uid}/${image.name}`;
+       const imgRef = ref(storage, roadImage);
+
+       try {
+         await deleteObject(imgRef);
+         setCars(cars.filter((cars) => cars.id !== item.id));
+       } catch (err) {
+         console.log("Erro ao deletar imagem");
+       }
+     });
   };
 
   const handleLoadingImages = (id: string) => {
@@ -82,15 +93,15 @@ export function Dashboard() {
     <Container>
       <DashboardHeader />
       <main className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {cars.map((itens) => (
+        {cars.map((items) => (
           <section
-            key={itens.id}
+            key={items.id}
             className="w-full bg-white rounded-lg relative"
           >
             <button
               className="absolute bg-white w-10 h-10 rounded-full flex items-center justify-center right-2 top-2 drop-shadow"
               onClick={() => {
-                handleDeleteCars(itens.id);
+                handleDeleteCars(items);
               }}
             >
               <svg
@@ -115,76 +126,76 @@ export function Dashboard() {
               role="status"
               className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"
               style={{
-                display: loadingImages.includes(itens.id) ? "none" : "block",
+                display: loadingImages.includes(items.id) ? "none" : "block",
               }}
             ></div>
             <img
               className="w-full rounded-lg mb-2 max-h-72"
-              src={itens.images[0].url}
-              onLoad={() => handleLoadingImages(itens.id)}
+              src={items.images[0].url}
+              onLoad={() => handleLoadingImages(items.id)}
               style={{
-                display: loadingImages.includes(itens.id) ? "block" : "none",
+                display: loadingImages.includes(items.id) ? "block" : "none",
               }}
             />
             <div
               className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mt-1 mb-2 ml-2 px-2"
               style={{
-                display: loadingImages.includes(itens.id) ? "none" : "block",
+                display: loadingImages.includes(items.id) ? "none" : "block",
               }}
             ></div>
             <p
               className="font-bold mt-1 px-2"
               style={{
-                display: loadingImages.includes(itens.id) ? "block" : "none",
+                display: loadingImages.includes(items.id) ? "block" : "none",
               }}
             >
-              {itens.name}
+              {items.name}
             </p>
 
             <div className="flex flex-col px-2">
               <div
                 className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mt-1 mb-2 ml-2 px-2"
                 style={{
-                  display: loadingImages.includes(itens.id) ? "none" : "block",
+                  display: loadingImages.includes(items.id) ? "none" : "block",
                 }}
               ></div>
               <span
                 style={{
-                  display: loadingImages.includes(itens.id) ? "block" : "none",
+                  display: loadingImages.includes(items.id) ? "block" : "none",
                 }}
               >
-                Ano {itens.year} | {itens.km} KM
+                Ano {items.year} | {items.km} KM
               </span>
               <div
                 className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mt-1 mb-2 ml-2 px-2"
                 style={{
-                  display: loadingImages.includes(itens.id) ? "none" : "block",
+                  display: loadingImages.includes(items.id) ? "none" : "block",
                 }}
               ></div>
               <strong
                 style={{
-                  display: loadingImages.includes(itens.id) ? "block" : "none",
+                  display: loadingImages.includes(items.id) ? "block" : "none",
                 }}
                 className="text-black font-bold mt-4"
               >
-                R$ {itens.price}
+                R$ {items.price}
               </strong>
             </div>
 
-            <div className=" w-full h-px bg-slate-200 my-2"></div>
+            <div className=" w-full h-px bg-slate-300 my-2"></div>
             <div
               className="h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mt-1 mb-2 ml-2 px-2"
               style={{
-                display: loadingImages.includes(itens.id) ? "none" : "block",
+                display: loadingImages.includes(items.id) ? "none" : "block",
               }}
             ></div>
             <div className="px-2 pb-2">
               <span
                 style={{
-                  display: loadingImages.includes(itens.id) ? "block" : "none",
+                  display: loadingImages.includes(items.id) ? "block" : "none",
                 }}
               >
-                {itens.city}
+                {items.city}
               </span>
             </div>
           </section>

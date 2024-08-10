@@ -107,7 +107,9 @@ export function Register() {
           </button>
         </form>
 
-        <Link to={"/login"}>Já possui conta? Faça o login!</Link>
+        <Link 
+        className="bg-grey text-white"
+        to={"/login"}>Já possui conta? Faça o login!</Link>
       </div>
     </Container>
   );
