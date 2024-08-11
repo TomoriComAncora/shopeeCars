@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Container } from "../../Components/Container";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../services/fbConect";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -31,6 +31,7 @@ export function Cars() {
   const { id } = useParams();
   const [cars, setCars] = useState<CarsProps>();
   const [slider, setSlider] = useState<number>(2);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadingCar = async () => {
@@ -40,6 +41,9 @@ export function Cars() {
 
       const carRef = doc(db, "cars", id);
       await getDoc(carRef).then((snapshot) => {
+        if (!snapshot.data()) {
+          navigate("/");
+        }
         setCars({
           id: snapshot.id,
           name: snapshot.data()?.name,
@@ -65,7 +69,7 @@ export function Cars() {
     const handleScreenSize = () => {
       if (window.innerWidth < 720) {
         setSlider(1);
-      }else{
+      } else {
         setSlider(2);
       }
     };
@@ -81,17 +85,19 @@ export function Cars() {
 
   return (
     <Container>
-      <Swiper
-        slidesPerView={slider}
-        pagination={{ clickable: true }}
-        navigation
-      >
-        {cars?.images.map((image) => (
-          <SwiperSlide key={image.name}>
-            <img src={image.url} className="w-full h-96 object-cover" />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      {cars && (
+        <Swiper
+          slidesPerView={slider}
+          pagination={{ clickable: true }}
+          navigation
+        >
+          {cars?.images.map((image) => (
+            <SwiperSlide key={image.name}>
+              <img src={image.url} className="w-full h-96 object-cover" />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      )}
 
       {cars && (
         <main className="w-full bg-white rounded-lg p-5 my-4">
@@ -127,7 +133,11 @@ export function Cars() {
           <strong> Contato / WhatsApp</strong>
           <p>{cars.whatsapp}</p>
 
-          <a className="w-full flex items-center justify-center gap-2 my-6 cursor-pointer text-xl focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+          <a
+            href={`https://api.whatsapp.com/send?phone=${cars?.whatsapp}&text=Olá ${cars?.user}, vi esse ${cars?.name} e fiquei interessado`}
+            target="_blank"
+            className="w-full flex items-center justify-center gap-2 my-6 cursor-pointer text-xl focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+          >
             Conversar com vendedor
             <svg
               className="w-6 h-6 text-white dark:text-gray-800"
