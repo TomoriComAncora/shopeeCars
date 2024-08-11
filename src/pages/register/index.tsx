@@ -9,6 +9,7 @@ import { AuthContext } from "../../contexts/AuthContexts";
 import { auth } from "../../services/fbConect";
 import Logo from "../../assets/Logo.png";
 import {createUserWithEmailAndPassword, signOut, updateProfile} from "firebase/auth";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   email: z
@@ -53,10 +54,12 @@ export function Register() {
           uid: user.user.uid,
         });
         console.log("Usuario cadastrado com sucesso");
+        toast.success("Usuario cadastrado com sucesso!");
         navigate("/dashboard", { replace: true });
       })
       .catch((err) => {
         console.log("Erro ao cadastra esse usuário");
+        toast.error("Erro ao cadastra esse usuário!");
         console.log(err);
       });
   };

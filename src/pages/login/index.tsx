@@ -10,6 +10,7 @@ import { Button } from "flowbite-react";
 
 import { signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { auth } from "../../services/fbConect";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   email: z
@@ -44,11 +45,13 @@ export function Login() {
     signInWithEmailAndPassword(auth, data.email, data.password)
       .then((user) => {
         console.log("Logado com sucesso");
+        toast.success("Logado com sucesso!");
         navigate("/dashboard");
         console.log(user);
       })
       .catch((err: any) => {
         console.log("Usuário não encontrado!");
+        toast.error("Usuário não encontrado!");
         console.log(err.message);
       });
   };

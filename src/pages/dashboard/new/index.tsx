@@ -16,6 +16,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { addDoc, collection } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 const schema = z.object({
   name: z.string().min(1, "O campo nome é obrigatório"),
@@ -88,6 +89,7 @@ export function New() {
           url: downloadUrl,
         };
         setImagesCar((prev) => [...prev, imageItens]);
+        toast.success("Imagem cadastrada com sucesso!");
       });
     });
   };
@@ -95,7 +97,7 @@ export function New() {
   const onSubmit = (data: formData) => {
     console.log(data);
     if (imagesCar.length <= 2) {
-      alert("Adicione no mínimo 3 imagens do carro");
+      toast.error("Adicione no mínimo 3 imagens do carro!");
       return;
     }
 
@@ -125,10 +127,12 @@ export function New() {
         reset();
         setImagesCar([]);
         console.log("Cadastrado com sucesso!");
+        toast.success("Cadastrado com sucesso!");
       })
       .catch((err) => {
         console.log(err);
         console.log("Erro ao cadastrar carro!");
+        toast.error("Erro ao cadastrar carro!");
       });
   };
 
@@ -138,11 +142,13 @@ export function New() {
     await deleteObject(delRef)
       .then(() => {
         console.log("Imagem deletada com sucesso!");
+        toast.success("Imagem deletada com sucesso!");
         setImagesCar(imagesCar.filter((car) => car.url !== item.url));
       })
       .catch((err) => {
         console.log(err);
         console.log("Erro ao deletar imagem!");
+        toast.error("Erro ao deletar imagem!");
       });
   };
 
