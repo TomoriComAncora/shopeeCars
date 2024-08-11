@@ -100,7 +100,7 @@ export function Home() {
           </div>
         </section>
 
-        <h1 className="font-bold text-center mt-6 text-2xl mb-4 text-white">
+        <h1 className="font-bold text-center mt-6 text-2xl mb-4">
           Carros novos e usados em todo o Brasil
         </h1>
 
@@ -120,7 +120,7 @@ export function Home() {
                 <img
                   src={itens.images[0].url}
                   alt="foto do carro"
-                  className="w-full rounded-lg mb-2 max-h-72 hover:scale-105 transition-all"
+                  className="w-full rounded-lg mb-2 h-72 object-cover hover:scale-105 transition-all"
                   onLoad={() => handleLoadingImage(itens.id)}
                   style={{
                     display: loadingImages.includes(itens.id)

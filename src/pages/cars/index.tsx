@@ -65,6 +65,8 @@ export function Cars() {
     const handleScreenSize = () => {
       if (window.innerWidth < 720) {
         setSlider(1);
+      }else{
+        setSlider(2);
       }
     };
 
@@ -86,7 +88,7 @@ export function Cars() {
       >
         {cars?.images.map((image) => (
           <SwiperSlide key={image.name}>
-            <img src={image.url} className="w-full h-96" />
+            <img src={image.url} className="w-full h-96 object-cover" />
           </SwiperSlide>
         ))}
       </Swiper>

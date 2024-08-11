@@ -88,7 +88,7 @@ export function Login() {
           </Button>
         </form>
 
-        <Link to={"/register"} className="text-white">
+        <Link to={"/register"}>
           Não possui conta? Cadastre-se
         </Link>
       </div>

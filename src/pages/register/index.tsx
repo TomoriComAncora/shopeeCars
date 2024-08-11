@@ -108,7 +108,6 @@ export function Register() {
         </form>
 
         <Link 
-        className="bg-grey text-white"
         to={"/login"}>Já possui conta? Faça o login!</Link>
       </div>
     </Container>
