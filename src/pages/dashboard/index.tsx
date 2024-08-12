@@ -12,6 +12,7 @@ import {
 import { db, storage } from "../../services/fbConect";
 import { ref, deleteObject } from "firebase/storage";
 import { AuthContext } from "../../contexts/AuthContexts";
+import { Link } from "react-router-dom";
 
 interface CarsProps {
   id: string;
@@ -72,17 +73,17 @@ export function Dashboard() {
   const handleDeleteCars = async (item: CarsProps) => {
     const delRef = doc(db, "cars", item.id);
     await deleteDoc(delRef);
-     item.images.map(async (image) => {
-       const roadImage = `images/${image.uid}/${image.name}`;
-       const imgRef = ref(storage, roadImage);
+    item.images.map(async (image) => {
+      const roadImage = `images/${image.uid}/${image.name}`;
+      const imgRef = ref(storage, roadImage);
 
-       try {
-         await deleteObject(imgRef);
-         setCars(cars.filter((cars) => cars.id !== item.id));
-       } catch (err) {
-         console.log("Erro ao deletar imagem");
-       }
-     });
+      try {
+        await deleteObject(imgRef);
+        setCars(cars.filter((cars) => cars.id !== item.id));
+      } catch (err) {
+        console.log("Erro ao deletar imagem");
+      }
+    });
   };
 
   const handleLoadingImages = (id: string) => {
@@ -99,7 +100,7 @@ export function Dashboard() {
             className="w-full bg-white rounded-lg relative"
           >
             <button
-              className="absolute bg-white w-10 h-10 rounded-full flex items-center justify-center right-2 top-2 drop-shadow"
+              className="absolute bg-white w-10 h-10 rounded-full flex items-center justify-center right-2 top-2 drop-shadow hover:scale-110 duration-200"
               onClick={() => {
                 handleDeleteCars(items);
               }}
@@ -122,6 +123,28 @@ export function Dashboard() {
                 />
               </svg>
             </button>
+            <Link
+              to={`/dashboard/new/${items.id}`}
+              className="absolute bg-white w-10 h-10 rounded-full flex items-center justify-center left-2 top-2 drop-shadow hover:scale-110 duration-200"
+            >
+              <svg
+                className="w-6 h-6 text-gray-800 dark:text-white"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"
+                />
+              </svg>
+            </Link>
             <div
               role="status"
               className="w-full rounded-lg mb-2 h-72 border-gray-200 shadow animate-pulse md:p-6 dark:border-gray-700 bg-slate-300"

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState, useContext } from "react";
+import { ChangeEvent, useState, useContext, useEffect } from "react";
 import { Container } from "../../../Components/Container";
 import { DashboardHeader } from "../../../Components/PanelHeader";
 import { useForm } from "react-hook-form";
@@ -15,8 +15,9 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import toast from "react-hot-toast";
+import { useNavigate, useParams } from "react-router-dom";
 
 const schema = z.object({
   name: z.string().min(1, "O campo nome é obrigatório"),
@@ -45,8 +46,10 @@ interface ImageItensProps {
 
 export function New() {
   const { user } = useContext(AuthContext);
+  const { id } = useParams();
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors },
     reset,
@@ -56,6 +59,48 @@ export function New() {
   });
 
   const [imagesCar, setImagesCar] = useState<ImageItensProps[]>([]);
+  const [edit, setEdit] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getDataCars = async () => {
+      if (!id) {
+        return;
+      }
+
+      const docRef = doc(db, "cars", id);
+      await getDoc(docRef)
+        .then((snapshot) => {
+          const data = snapshot.data();
+          setValue("name", data?.name);
+          setValue("year", data?.year);
+          setValue("price", data?.price);
+          setValue("city", data?.city);
+          setValue("describe", data?.describe);
+          setValue("km", data?.km);
+          setValue("model", data?.model);
+          setValue("whatsapp", data?.whatsapp);
+
+          const images = data?.images.map((img: any) => ({
+            uid: img.uid,
+            name: img.name,
+            prevUrl: img.url,
+            url: img.url,
+          }));
+
+          setImagesCar(images);
+          setEdit(true);
+          toast.success("Nova imagem adicionada com sucesso!");
+        })
+        .catch((err) => {
+          setEdit(false);
+          console.log(err);
+          toast.error("Problema ao adicionar nova imagem!");
+        });
+    };
+
+    getDataCars();
+  }, [id]);
 
   const handlefile = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -109,31 +154,57 @@ export function New() {
       };
     });
 
-    addDoc(collection(db, "cars"), {
-      name: data.name,
-      model: data.model,
-      year: data.year,
-      km: data.km,
-      city: data.city,
-      whatsapp: data.whatsapp,
-      price: data.price,
-      describe: data.describe,
-      createIn: new Date(),
-      user: user?.name,
-      uid: user?.uid,
-      images: listImagesCars,
-    })
-      .then(() => {
-        reset();
-        setImagesCar([]);
-        console.log("Cadastrado com sucesso!");
-        toast.success("Cadastrado com sucesso!");
+    if (id) {
+      const docRef = doc(db, "cars", id);
+      updateDoc(docRef, {
+        name: data.name.toUpperCase(),
+        model: data.model,
+        year: data.year,
+        km: data.km,
+        whatsapp: data.whatsapp,
+        city: data.city,
+        price: data.price,
+        describe: data.describe,
+        user: user?.name,
+        uid: user?.uid,
+        images: listImagesCars,
       })
-      .catch((err) => {
-        console.log(err);
-        console.log("Erro ao cadastrar carro!");
-        toast.error("Erro ao cadastrar carro!");
-      });
+        .then(() => {
+          toast.success("Carro editado com sucesso!");
+          reset();
+          navigate("/dashboard");
+          setEdit(false);
+        })
+        .catch(() => {
+          toast.error("Problema ao editar este carro!");
+        });
+    }else{
+      addDoc(collection(db, "cars"), {
+        name: data.name.toUpperCase(),
+        model: data.model,
+        year: data.year,
+        km: data.km,
+        city: data.city,
+        whatsapp: data.whatsapp,
+        price: data.price,
+        describe: data.describe,
+        createIn: new Date(),
+        user: user?.name,
+        uid: user?.uid,
+        images: listImagesCars,
+      })
+        .then(() => {
+          reset();
+          setImagesCar([]);
+          console.log("Cadastrado com sucesso!");
+          toast.success("Cadastrado com sucesso!");
+        })
+        .catch((err) => {
+          console.log(err);
+          console.log("Erro ao cadastrar carro!");
+          toast.error("Erro ao cadastrar carro!");
+        });
+    }
   };
 
   const handleDeleteImage = async (item: ImageItensProps) => {
@@ -338,28 +409,21 @@ export function New() {
             )}
           </div>
 
+          {edit ? (
           <button
             type="submit"
-            className="text-white bg-zinc-700 hover:bg-zinc-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all"
-          >
-            Cadastrar
-          </button>
-
-          {/* {editar ? (
-          <button
-            type="submit"
-            className="text-white bg-zinc-700 hover:bg-zinc-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all"
+            className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all"
           >
             Editar
           </button>
         ) : (
           <button
             type="submit"
-            className="text-white bg-zinc-700 hover:bg-zinc-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all"
+            className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 transition-all"
           >
             Cadastrar
           </button>
-        )} */}
+        )}
         </form>
       </div>
     </Container>
